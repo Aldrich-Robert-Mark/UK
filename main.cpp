@@ -18,11 +18,12 @@
 
 #include "main.h"
 
-
 #include "configuration.cpp"
 #include "primary.cpp"
 
 using namespace std;
+
+GlobalVariables GV;
 
 // Initialize the application
 bool MainProgram::OnInit( )
@@ -30,16 +31,19 @@ bool MainProgram::OnInit( )
 
     wxInitialize();
 
-    const char *offical_program_name = "1840";
-
     // Check the setup
-    if( !configuration( ))
+    char path[256];
+    if( !configuration( GV.GetProgramName( ), path ))
         {
         return false;
         }
+    else
+        {
+        GV.SetDefaultPath( path );
+        }
 
     // Create the main application window
-    PrimaryWindow *main_frame = new PrimaryWindow( _( "1840" ));
+    PrimaryWindow *main_frame = new PrimaryWindow( _( GV.GetProgramName( )));
 
     // Show it
     main_frame->Show( true );
@@ -48,17 +52,6 @@ bool MainProgram::OnInit( )
 
     // Start the event loop
     return true;
-    }
-
-GlobalVariables::GetProgramName( char *name )
-    {
-    strcpy( *name, official_program_name );
-    }
-
-GlobalVariables::GlobalVariables( )
-    {
-    char official_program_name[5];
-    strcpy( official_program_name, "1840" );
     }
 
 // Give wxWidgets the means to create a MainProgram object

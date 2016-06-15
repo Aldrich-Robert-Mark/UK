@@ -1,6 +1,7 @@
 #include "configuration.h"
 
-bool configuration( )
+
+bool configuration( const char *ProgramName, char *DefaultPath )
     {
     // Initialize variables
     wxStandardPaths StandardPaths = wxStandardPaths::Get( );
@@ -16,12 +17,12 @@ bool configuration( )
 
     wxFileName working_file;
 
-    working_file.SplitPath( user_data_path, p_split_volume, p_split_path, p_split_name, p_split_ext, p_split_has_ext, wxPATH_NATIVE );
+    wxFileName::SplitPath( user_data_path, p_split_volume, p_split_path, p_split_name, p_split_ext, p_split_has_ext, wxPATH_NATIVE );
     // Check if the data directory is in the standard designated location
     while( !wxDirExists( user_data_path ))
         {
         // The data directory does not exist in the primary location
-        wxString message_string = _( "The 1840 data files are not found in the normal directory.\n" );
+        wxString message_string = message_string.Format( _( "The %s data files are not found in the normal directory.\n" ), ProgramName );
         message_string.append( _( "If you have the files in a custom location, select \"Other directory\", " ));
         message_string.append( _( "if you are (re-)installing the program, select \"Install\"." ));
         wxMessageDialog chkinstall(
@@ -42,9 +43,7 @@ bool configuration( )
             working_path.append( split_volume );
             working_path.append( split_path );
             working_path.append( wxFILE_SEP_PATH );
-//            message_string.clear( );
-//            message_string.append( _( "Select the directory where the 1840 directory is:" ));
-            message_string = message_string.Format( _( "Select the directory where the %s directory is:" ), "OPN" );
+            message_string = message_string.Format( _( "Select the directory where the configuration file \"%s.ini\" is:" ), ProgramName );
             wxDirDialog dir_dialog(
                 NULL,
                 message_string,
