@@ -1,198 +1,41 @@
 #include "configuration.h"
 
 
-
-
-
-
-
-bool CreateFolder( wxString working_path )
+bool CheckDirectory( wxString user_data_path, const char *directory_name )
     {
+    wxChar slash = wxFileName::GetPathSeparator( );
+
+    wxString working_path = user_data_path;
+    working_path.append( slash );
+    working_path.append( directory_name );
     if( !wxDirExists( working_path ))
         {
-        wxMkDir( working_path, wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE );
-        if( !wxDirExists( working_path ))
-            {
-            // Problem creating the default directory
-            wxString message_string = message_string.Format( _( "Problem creating the directory\n%s\nYou need to investigate and then retry." ), working_path );
-            wxMessageDialog check_installation(
-                NULL,
-                message_string,
-                _( "Directory creation problem" ),
-                wxCENTER | wxOK | wxICON_EXCLAMATION, wxDefaultPosition );
-            check_installation.ShowModal( );
-            return false;
-            }
-        }
-    return true;
-    }
-
-
-
-
-
-
-
-bool CreateSubFolders( wxString base_path )
-    {
-    wxString working_path;
-
-    working_path = base_path;
-    working_path.append( wxFileName::GetPathSeparator( ));
-    working_path.append( "outgoing" );
-    if( !CreateFolder( working_path ))
-        {
-        return false;
-        }
-    working_path = base_path;
-    working_path.append( wxFileName::GetPathSeparator( ));
-    working_path.append( "letters" );
-    if( !CreateFolder( working_path ))
-        {
-        return false;
-        }
-    working_path = base_path;
-    working_path.append( wxFileName::GetPathSeparator( ));
-    working_path.append( "envelopes" );
-    if( !CreateFolder( working_path ))
-        {
-        return false;
-        }
-    working_path = base_path;
-    working_path.append( wxFileName::GetPathSeparator( ));
-    working_path.append( "addressing" );
-    if( !CreateFolder( working_path ))
-        {
-        return false;
-        }
-    working_path = base_path;
-    working_path.append( wxFileName::GetPathSeparator( ));
-    working_path.append( "incoming" );
-    if( !CreateFolder( working_path ))
-        {
-        return false;
-        }
-    working_path = base_path;
-    working_path.append( wxFileName::GetPathSeparator( ));
-    working_path.append( "received" );
-    if( !CreateFolder( working_path ))
-        {
-        return false;
-        }
-    working_path = base_path;
-    working_path.append( wxFileName::GetPathSeparator( ));
-    working_path.append( "outarchive" );
-    if( !CreateFolder( working_path ))
-        {
-        return false;
-        }
-    working_path = base_path;
-    working_path.append( wxFileName::GetPathSeparator( ));
-    working_path.append( "inarchive" );
-    if( !CreateFolder( working_path ))
-        {
-        return false;
-        }
-    return true;
-    }
-
-
-
-
-
-
-
-bool InstallConfiguration( const char *ProgramName, char *DefaultPath )
-    {
-    // Install the configuration files
-    wxChar slash = wxFileName::GetPathSeparator( );
-    wxStandardPaths StandardPaths = wxStandardPaths::Get( );
-
-    wxString working_path = StandardPaths.GetUserDataDir( );
-    wxString message_string = _( "Are you (re-)installing the program in the standard location?" );
-    wxMessageDialog check_installation(
-        NULL,
-        message_string,
-        _( "New Installation" ),
-        wxCENTER | wxYES | wxNO | wxCANCEL | wxYES_DEFAULT,
-        wxDefaultPosition );
-        check_installation.SetYesNoLabels( _( "Standard" ), _( "Custom" ));
-
-    switch( check_installation.ShowModal( ))
-        {
-        case wxID_YES:
-            {
-            // Do the install to the standard directory
-            if( !wxDirExists( working_path ))
-                {
-                if( !CreateFolder( working_path ))
-                    {
-                    return false;
-                    }
-                }
-            if( !CreateSubFolders( working_path ))
-                {
-                return false;
-                }
-            }
-        case wxID_NO:
-            {
-            message_string = message_string.Format( _( "Select the directory where the configuration file \"%s.ini\" should be:" ), ProgramName );
-            wxDirDialog dir_dialog(
-                NULL,
-                message_string,
-                working_path,
-                wxDD_DEFAULT_STYLE );
-            if ( dir_dialog.ShowModal( ) == wxID_OK )
-                {
-                working_path = dir_dialog.GetPath( );
-                if( !CreateSubFolders( working_path ))
-                    {
-                    return false;
-                    }
-                }
-            else
-                {
-                return false;
-                }
-            break;
-            }
-        case wxID_CANCEL:
-            {
-            return false;
-            break;
-            }
-        default:
-            {
-std::cout << "default\n";
-            break;
-            }
-        }
-    // Now build the default configuration file
-    sqlite3 *ConfigurationFile;
-    int return_code = 0;
-    working_path.append( slash );
-    working_path.append( ProgramName );
-    working_path.append( ".ini" );
-    return_code = sqlite3_open( working_path, &ConfigurationFile );
-    if( return_code )
-        {
-        // Problem creating and opening the configuration file
-        wxString message_string = message_string.Format( _( "Problem opening/creating the configuration file\n%s\nError ID # %d\nYou need to investigate and then retry." ), working_path, return_code );
-        wxMessageDialog installation(
+        // Missing subfolder
+        wxString message_string = message_string.Format( _( "Missing data directory:\n%s\nProgram is going to stop." ), working_path );
+        wxMessageDialog MissingDir(
             NULL,
             message_string,
-            _( "Configuration file open/creation problem" ),
-            wxCENTER | wxCANCEL | wxICON_EXCLAMATION, wxDefaultPosition );
-        check_installation.ShowModal( );
+            _( "Missing directory problem" ),
+            wxCENTER | wxOK | wxICON_HAND, wxDefaultPosition );
+        MissingDir.ShowModal( );
         return false;
         }
-    sqlite3_close( ConfigurationFile );
     return true;
     }
 
 
 
+static int callback(void *data, int argc, char **argv, char **azColName){
+std::cout << "callback" << std::endl;
+    int i;
+    fprintf(stderr, "%s: ", (const char*)data);
+    for(i=0; i<argc; i++)
+        {
+        printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+        }
+    printf("\n");
+    return 0;
+    }
 
 
 
@@ -202,6 +45,17 @@ bool configuration( const char *ProgramName, char *DefaultPath )
     char program_name[256];
     strcpy( program_name, ProgramName );
     wxStandardPaths StandardPaths = wxStandardPaths::Get( );
+
+    const char *folder_names[8];
+    folder_names[0] = "outgoing";
+    folder_names[1] = "letters";
+    folder_names[2] = "envelopes";
+    folder_names[3] = "archive_local";
+    folder_names[4] = "archive_remote";
+    folder_names[5] = "addressing";
+    folder_names[6] = "received";
+    folder_names[7] = "incoming";
+    int folder_count = 8;
 
     wxFileName config_file;
 
@@ -214,10 +68,9 @@ bool configuration( const char *ProgramName, char *DefaultPath )
     wxChar slash = wxFileName::GetPathSeparator( );
 
     wxString working_path = StandardPaths.GetUserDataDir( );;
-    wxString user_data_path = StandardPaths.GetUserDataDir( );
-    wxString ini_file = user_data_path;
+    wxString ini_file = StandardPaths.GetUserDataDir( );
+    wxString user_data_path = ini_file;
     ini_file.append( slash );
-    ini_file.append( split_name );
     ini_file.append( ProgramName );
     ini_file.append( ".ini" );
 
@@ -227,18 +80,17 @@ bool configuration( const char *ProgramName, char *DefaultPath )
         // The configuration file does not exist in the primary location
         wxString message_string = message_string.Format( _( "The %s data files are not found in the normal directory.\n" ), ProgramName );
         message_string.append( _( "If you have the files in a custom location, select \"Other directory\", " ));
-        message_string.append( _( "if you are (re-)installing the program, select \"Install\"." ));
-        wxMessageDialog check_installation(
+        wxMessageDialog not_standard_directory_dialog(
             NULL,
             message_string,
             _( "Missing the data files" ),
-            wxCENTER | wxYES | wxNO | wxCANCEL | wxYES_DEFAULT,
+            wxCENTER | wxOK | wxCANCEL | wxYES_DEFAULT,
             wxDefaultPosition );
-        check_installation.SetYesNoLabels( _( "Other directory" ), _( "Install" ));
+        not_standard_directory_dialog.SetOKLabel( _( "Other directory" ));
 
-        switch( check_installation.ShowModal( ))
+        switch( not_standard_directory_dialog.ShowModal( ))
             {
-            case wxID_YES:
+            case wxID_OK:
                 {
                 // Have not found the configuration directory, so ask for it
                 message_string = message_string.Format( _( "Select the directory where the configuration file \"%s.ini\" is:" ), ProgramName );
@@ -249,10 +101,10 @@ bool configuration( const char *ProgramName, char *DefaultPath )
                     wxDD_DEFAULT_STYLE );
                 if ( dir_dialog.ShowModal( ) == wxID_OK )
                     {
-                    user_data_path = dir_dialog.GetPath( );
-                    user_data_path.append( slash );
-                    user_data_path.append( ProgramName );
-                    user_data_path.append( ".ini" );
+                    user_data_path = ini_file = dir_dialog.GetPath( );
+                    ini_file.append( slash );
+                    ini_file.append( ProgramName );
+                    ini_file.append( ".ini" );
                     }
                 else
                     {
@@ -260,27 +112,76 @@ bool configuration( const char *ProgramName, char *DefaultPath )
                     }
                 break;
                 }
-            case wxID_NO:
-                {
-                // Re-installing the program
-                if( !InstallConfiguration( ProgramName, DefaultPath ))
-                    {
-                    return false;
-                    };
-                break;
-                }
-            case wxID_CANCEL:
+            default:
                 {
                 return false;
                 break;
                 }
-            default:
-                {
-                break;
-                }
             }
         }
+    // The ini file has been found. Check for proper directories.
+    char directory[32];
+    int i;
+    for( i = 0; i < folder_count; i++ )
+        {
+        if( !CheckDirectory( user_data_path, folder_names[i] ))
+            {
+            return false;
+            }
+        }
+    // The ini file and directories exist. Open the ini file and update the default directory.
+    sqlite3 *configuration_file;
+    char sql_statement[1024], *sql = sql_statement;
+    int return_code;
+    char *zErrMsg = 0;
+    const char* data = "Callback function called";
 
+    return_code = sqlite3_open( ini_file, &configuration_file );
+    if( return_code != SQLITE_OK )
+        {
+        wxString message_string = message_string.Format( _( "The configuration file could not be opened.\n%s\nThe program will stop." ), sqlite3_errmsg( configuration_file ));
+        wxMessageDialog ErrorMessage(
+            NULL,
+            message_string,
+            _( "Configuration file problem" ),
+            wxCENTER | wxOK | wxICON_HAND,
+            wxDefaultPosition );
+
+        ErrorMessage.ShowModal( );
+        sqlite3_close( configuration_file );
+        return false;
+        }
+    if( configuration_file == NULL )
+        {
+        wxString message_string = message_string.Format( _( "The configuration file could not be opened.\n%s\nThe program will stop." ), sqlite3_errmsg( configuration_file ));
+        wxMessageDialog ErrorMessage(
+            NULL,
+            message_string,
+            _( "Configuration file problem" ),
+            wxCENTER | wxOK | wxICON_HAND,
+            wxDefaultPosition );
+
+        ErrorMessage.ShowModal( );
+        sqlite3_close( configuration_file );
+        return false;
+        }
+    strcpy( sql, "select * from parameters where ID = \"default_path\"");
+    return_code = sqlite3_exec( configuration_file, sql, callback, (void*)data, &zErrMsg);
+    if( return_code != SQLITE_OK )
+        {
+        wxString message_string = message_string.Format( _( "SQL statement \"%s\" errored.\nThe error message is \"%s\"\nThe program will stop." ), sql, sqlite3_errmsg( configuration_file ));
+        wxMessageDialog ErrorMessage(
+            NULL,
+            message_string,
+            _( "Configuration file problem" ),
+            wxCENTER | wxOK | wxICON_HAND,
+            wxDefaultPosition );
+
+        ErrorMessage.ShowModal( );
+        sqlite3_close(configuration_file);
+        return false;
+        }
+    sqlite3_close(configuration_file);
     return true;
     };
 
