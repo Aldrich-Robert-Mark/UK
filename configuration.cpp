@@ -25,17 +25,6 @@ bool CheckDirectory( wxString user_data_path, const char *directory_name )
 
 
 
-static int callback(void *data, int argc, char **argv, char **azColName){
-std::cout << "callback" << std::endl;
-    int i;
-    fprintf(stderr, "%s: ", (const char*)data);
-    for(i=0; i<argc; i++)
-        {
-        printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-        }
-    printf("\n");
-    return 0;
-    }
 
 
 
@@ -131,13 +120,16 @@ bool configuration( const char *ProgramName, char *DefaultPath )
         }
     // The ini file and directories exist. Open the ini file and update the default directory.
     sqlite3 *configuration_file;
+    typedef struct sqlite3_stmt sqlite3_statement;
+    sqlite3_statement *compiled_sql;
     char sql_statement[1024], *sql = sql_statement;
+    char sql_remaining[1024], base_path[64];
+    const char *remaining = sql_remaining;
     int return_code;
-    char *zErrMsg = 0;
-    const char* data = "Callback function called";
+    const char* sql_next = 0;
 
     return_code = sqlite3_open( ini_file, &configuration_file );
-    if( return_code != SQLITE_OK )
+    if( return_code != SQLITE_OK || configuration_file == NULL )
         {
         wxString message_string = message_string.Format( _( "The configuration file could not be opened.\n%s\nThe program will stop." ), sqlite3_errmsg( configuration_file ));
         wxMessageDialog ErrorMessage(
@@ -151,22 +143,9 @@ bool configuration( const char *ProgramName, char *DefaultPath )
         sqlite3_close( configuration_file );
         return false;
         }
-    if( configuration_file == NULL )
-        {
-        wxString message_string = message_string.Format( _( "The configuration file could not be opened.\n%s\nThe program will stop." ), sqlite3_errmsg( configuration_file ));
-        wxMessageDialog ErrorMessage(
-            NULL,
-            message_string,
-            _( "Configuration file problem" ),
-            wxCENTER | wxOK | wxICON_HAND,
-            wxDefaultPosition );
-
-        ErrorMessage.ShowModal( );
-        sqlite3_close( configuration_file );
-        return false;
-        }
-    strcpy( sql, "select * from parameters where ID = \"default_path\"");
-    return_code = sqlite3_exec( configuration_file, sql, callback, (void*)data, &zErrMsg);
+    strcpy( base_path, user_data_path.ToAscii());
+    sprintf( sql_statement, "UPDATE parameters SET value = \"%s\" WHERE parameter = \"base_path\"", base_path );
+    return_code = sqlite3_prepare_v2( configuration_file, sql_statement, 1024, &compiled_sql, &remaining );
     if( return_code != SQLITE_OK )
         {
         wxString message_string = message_string.Format( _( "SQL statement \"%s\" errored.\nThe error message is \"%s\"\nThe program will stop." ), sql, sqlite3_errmsg( configuration_file ));
@@ -181,6 +160,47 @@ bool configuration( const char *ProgramName, char *DefaultPath )
         sqlite3_close(configuration_file);
         return false;
         }
+    return_code = SQLITE_BUSY;
+    while( return_code == SQLITE_BUSY )
+        {
+        return_code = sqlite3_step( compiled_sql );
+        if( return_code == SQLITE_BUSY )
+            {
+            clock_t end_time = 1000 + clock( );
+            while( clock( ) <= end_time );
+            }
+        }
+    if( return_code != SQLITE_DONE )
+        {
+        wxString message_string = message_string.Format( _( "SQL statement \"%s\" errored.\nThe error message is \"%s\"\nThe program will stop." ), sql, sqlite3_errmsg( configuration_file ));
+        wxMessageDialog ErrorMessage(
+            NULL,
+            message_string,
+            _( "Configuration file problem" ),
+            wxCENTER | wxOK | wxICON_HAND,
+            wxDefaultPosition );
+
+        ErrorMessage.ShowModal( );
+        sqlite3_close(configuration_file);
+        return false;
+        }
+    return_code =  sqlite3_finalize( compiled_sql );
+    if( return_code != SQLITE_OK )
+        {
+        wxString message_string = message_string.Format( _( "SQL statement \"%s\" errored.\nThe error message is \"%s\"\nThe program will stop." ), sql, sqlite3_errmsg( configuration_file ));
+        wxMessageDialog ErrorMessage(
+            NULL,
+            message_string,
+            _( "Configuration file problem" ),
+            wxCENTER | wxOK | wxICON_HAND,
+            wxDefaultPosition );
+
+        ErrorMessage.ShowModal( );
+        sqlite3_close(configuration_file);
+        return false;
+        }
+
+
     sqlite3_close(configuration_file);
     return true;
     };
