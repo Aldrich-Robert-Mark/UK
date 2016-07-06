@@ -17,38 +17,35 @@
  */
 
 #include "main.h"
-
 #include "configuration.cpp"
+/*
 #include "primary.cpp"
+*/
 
 using namespace std;
 
-GlobalVariables GV;
 
 // Initialize the application
 bool MainProgram::OnInit( )
     {
 
-    wxInitialize();
+    wxInitialize( );
+
+    Configuration Config( GetAppName( ));
 
     // Check the setup
-    char path[256];
-    if( !configuration( GV.GetProgramName( ), path ))
+    if( !Config.OK( ))
         {
         return false;
         }
-    else
-        {
-        GV.SetDefaultPath( path );
-        }
-
+/*
     // Create the main application window
-    PrimaryWindow *main_frame = new PrimaryWindow( _( GV.GetProgramName( )));
+    PrimaryFrame *main_frame = new PrimaryFrame( &Config );
 
     // Show it
     main_frame->Show( true );
-
-    wxUninitialize();
+*/
+    wxUninitialize( );
 
     // Start the event loop
     return true;
