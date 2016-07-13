@@ -17,9 +17,9 @@
  */
 
 #include "main.h"
-#include "configuration.cpp"
+#include "config.cpp"
 /*
-#include "primary.cpp"
+#include "top_level.cpp"
 */
 
 using namespace std;
@@ -31,7 +31,7 @@ bool MainProgram::OnInit( )
 
     wxInitialize( );
 
-    Configuration Config( GetAppName( ));
+    Configuration Config( "1840" );
 
     // Check the setup
     if( !Config.OK( ))
@@ -40,7 +40,7 @@ bool MainProgram::OnInit( )
         }
 /*
     // Create the main application window
-    PrimaryFrame *main_frame = new PrimaryFrame( &Config );
+    TopLevelFrame *main_frame = new TopLevelFrame( &Config );
 
     // Show it
     main_frame->Show( true );

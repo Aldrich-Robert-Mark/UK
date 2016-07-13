@@ -6,13 +6,13 @@
 #include <string>
 #include <wx/app.h>
 #include <wx/filefn.h>
-#include <wx/msgdlg.h>
-
 #include <wx/filename.h>
+#include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include <wx/string.h>
 #include <wx/wx.h>
 
+#include "database.cpp"
 #include "point_def.h"
 #include "frame_ids.h"
 
@@ -21,7 +21,7 @@ using namespace std;
 class Configuration
     {
     public:
-        Configuration( wxString program_name );
+        Configuration( string program_name );
         bool OK( );
         bool GetBasePath( string base_path );
         bool GetProgramName( string program_name );
@@ -33,13 +33,13 @@ class Configuration
         Point GetSize( const FrameTitle frame_id );
 
     private:
-        bool CheckDirectory( const wxString user_data_path, const string directory_name );
-        wxString AddFileToPath( const wxString path, const string file, const string extension );
+        bool CheckDirectory( const string directory_name );
 
         bool config_ok;
-        const wxUniChar slash;
+        char slash;
         string config_program_name;
         string config_base_path;
+        string ini_file;
         Point config_origin[ 9 ];
         Point config_size[ 9 ];
     };

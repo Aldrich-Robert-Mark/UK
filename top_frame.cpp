@@ -4,7 +4,7 @@
 #include "frame_ids.h"
 
 
-void PrimaryFrame::pause( float seconds )
+void PrimaryFrame::Pause( float seconds )
     {
     clock_t end_time = seconds * 1000 + clock( );
     while( clock( ) <= end_time );
@@ -20,10 +20,6 @@ void PrimaryFrame::OnQuit( wxCommandEvent& event )
 PrimaryFrame::PrimaryFrame( Configuration *config )
     {
     // set up the variables
-    wxUniChar uc_slash = wxFileName::GetPathSeparator( );
-    char c_slash[2];
-    string program_name;
-    if( !uc_slash.GetAsChar( c_slash )) std::cout << "Problem converting path symbol to character." << std::endl;
     sqlite3 *configuration_file;
     typedef struct sqlite3_stmt sqlite3_statement;
     sqlite3_statement *compiled_sql;

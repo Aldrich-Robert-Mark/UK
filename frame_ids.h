@@ -3,7 +3,7 @@
 
 enum FrameTitle
     {
-    TOPLEVEL,
+    TOPLEVEL = 0,
     LETTERS,
     ENVELOPES,
     ADDRESSING,

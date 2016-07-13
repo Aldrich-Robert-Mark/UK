@@ -7,8 +7,6 @@
 #include <wx/filefn.h>
 #include <wx/stdpaths.h>
 
-#include "mondrian.xpm"
-
 // DEFINE THE STRUCTURE OF THE MAIN PROGRAM
 
 
