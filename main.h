@@ -6,6 +6,8 @@
 #include <wx/filename.h>
 #include <wx/filefn.h>
 #include <wx/stdpaths.h>
+#include "configuration.h"
+#include "top_level.h"
 
 // DEFINE THE STRUCTURE OF THE MAIN PROGRAM
 

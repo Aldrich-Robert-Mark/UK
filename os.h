@@ -2,11 +2,14 @@
 #define _OS_H
 
 #include <wx/stdpaths.h>
+#include <wx/string.h>
+#include <wx/filename.h>
+
+using namespace std;
 
 class OS
     {
     public:
-        OS( );
         bool DirExists( const string name );
         bool FileExists( const string name );
         string GetUserDataDir( );

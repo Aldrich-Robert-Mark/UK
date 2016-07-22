@@ -1,15 +1,16 @@
-#ifndef _PRIMARY_H
-#define _PRIMARY_H
+#ifndef _TOP_LEVEL_H
+#define _TOP_LEVEL_H
 
 #include <wx/wx.h>
+
 #include "configuration.h"
 
-
 // Declare the main frame class
-class PrimaryFrame : public wxFrame {
+class TopLevel : public wxFrame
+    {
     public:
         // Constructor
-        PrimaryFrame( Configuration *config );
+        TopLevel( Configuration *config );
 
         // Event handlers
         void OnQuit( wxCommandEvent& event );
@@ -17,7 +18,6 @@ class PrimaryFrame : public wxFrame {
     private:
         // This class handles events
         DECLARE_EVENT_TABLE( );
-        void pause( float seconds );
     };
 
 #endif

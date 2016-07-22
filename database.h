@@ -1,34 +1,43 @@
 #ifndef _DATABASE_H
 #define _DATABASE_H
 
-#include <sqlite3.h>
+#include <iostream>
 #include <string>
+#include <functional>
 
+#include "time_features.h"
 #include "point_def.h"
+#include "sqlite3.h"
+#include "identifications.h"
 
 using namespace std;
 
-class Database
+class Data
     {
     public:
-        Database( );
-        string DB_Error( );
-        bool DB_Read( const string parameter, const string value );
-        bool DB_Read( const string parameter, const Point value );
-        bool DB_Write( const string parameter, const string value );
-        bool DB_Write( const string parameter, const Point value );
-        bool DB_Open( const string file_name );
-        bool DB_Close( );
+        // Functions
+        Data( const string filename );
+        string Error( );
+        bool Get( const string parameter, const string value );
+        bool Get( const string parameter, const Point value );
+        bool Save( const string parameter, const string value );
 
     private:
-        sqlite3 *configuration_file;
-        string error_message;
+        // Functions
+        int SQLFunction( const int function_type );
+        bool RunSQL( const int function_type );
+        bool Open( );
+        bool Close( );
+
+        // Variables
+        Point sql_results_p;
+        string error_message, file_name, sql_results_s;
         typedef struct sqlite3_stmt sqlite3_statement;
         sqlite3_statement *compiled_sql;
-        char sql_statement[1024], *sql = sql_statement;
-        char sql_remaining[1024], base_path[64];
-        const char *remaining = sql_remaining;
-        const char* sql_next = 0;
+        typedef struct sqlite3 sqlite3;
+        sqlite3 *DataFile;
+        char sql_statement[1024];
+        const char *sql_remaining;
     };
 
 #endif

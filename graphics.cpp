@@ -1,12 +1,16 @@
+#ifndef _GRAPHICS_CPP
+#define _GRAPHICS_CPP
+
 #include "graphics.h"
 
 using namespace std;
 
 int button_quantity;
 long button_alignment, icon_id, default_button;
-string message_string, message_title;
 string button_1_string, button_2_string, button_3_string;
 string default_path;
+string frame_image_file_name;
+string message_string, message_title;
 
 string Graphics::MessageString( )
     {
@@ -93,6 +97,12 @@ bool Graphics::Icon( const int ms )
             }
         }
     return false;
+    }
+
+void Graphics::SetProgramImage( const string name )
+    {
+    wxString FileName = name;
+    wxIcon ImageFile( FileName, wxBITMAP_TYPE_JPEG, -1 );
     }
 
 string Graphics::ButtonText( const int ms )
@@ -358,13 +368,17 @@ void Graphics::Redraw( )
 // Class constructor
 Graphics::Graphics( )
     {
-    this->message_string = "";
-    this->message_title = "";
-    this->button_alignment = 'C';
+    OS Disk;
+    this->button_alignment = wxCENTER;
     this->button_1_string = "Yes";
     this->button_2_string = "No";
     this->button_3_string = "Cancel";
     this->button_quantity = 1;
     this->default_button = 0;
+    this->default_path = Disk.GetUserDataDir( );
     this->icon_id = wxICON_NONE;
+    this->message_string = "";
+    this->message_title = "";
     };
+
+#endif

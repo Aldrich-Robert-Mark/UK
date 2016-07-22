@@ -1,16 +1,14 @@
+#ifndef _OSS_CPP
+#define _OSS_CPP
+
 #include "os.h"
 
 using namespace std;
 
-wxStandardPaths StandardPaths = wxStandardPaths::Get( );
 
-OS::OS( )
-    {
-    }
 bool OS::DirExists( const string name )
     {
-    wxString string_name;
-    string_name.FromAscii( name.c_str( ));
+    wxString string_name = name.c_str( );
     return wxDirExists( string_name );
     }
 bool OS::FileExists( const string name )
@@ -25,5 +23,8 @@ char OS::Slash( )
     }
 string OS::GetUserDataDir( )
     {
+    wxStandardPaths StandardPaths = wxStandardPaths::Get( );
     return string( StandardPaths.GetUserDataDir( ));
     }
+
+#endif

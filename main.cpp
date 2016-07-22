@@ -3,9 +3,9 @@
  *
  *       Filename:  main.cpp
  *
- *    Description:  This is the first of the files required to build the application
+ *    Description:  Local program to handle secure mail
  *
- *        Version:  1.0
+ *        Version:  0.1
  *        Created:  05/29/2016 02:03:06 PM
  *       Revision:  none
  *       Compiler:  gcc
@@ -17,10 +17,6 @@
  */
 
 #include "main.h"
-#include "config.cpp"
-/*
-#include "top_level.cpp"
-*/
 
 using namespace std;
 
@@ -28,8 +24,6 @@ using namespace std;
 // Initialize the application
 bool MainProgram::OnInit( )
     {
-
-    wxInitialize( );
 
     Configuration Config( "1840" );
 
@@ -40,15 +34,13 @@ bool MainProgram::OnInit( )
         }
 /*
     // Create the main application window
-    TopLevelFrame *main_frame = new TopLevelFrame( &Config );
-
+    TopLevel window( &Config );
     // Show it
-    main_frame->Show( true );
-*/
-    wxUninitialize( );
+    window.Show( true );
 
     // Start the event loop
-    return true;
+*/
+    return false;
     }
 
 // Give wxWidgets the means to create a MainProgram object
