@@ -9,19 +9,23 @@
 using namespace std;
 
 
-class Graphics
+class Graphics : public wxFrame
     {
     private:
-        char button_alignment;
-        string message_string, message_title;
+        int button_quantity, window_id, parent_id;
+        long button_alignment, icon_id, default_button;
         string button_1_string, button_2_string, button_3_string;
         string default_path;
         string frame_image_file_name;
-        int icon_id;
-        int button_quantity, default_button;
+        string message_string, message_title;
+        wxString window_title;
 
     public:
         Graphics( );
+
+        int Parent( );
+        void Parent( const int given_id );
+
         string MessageString( );
         void MessageString( const string ms );
 
@@ -31,7 +35,7 @@ class Graphics
         int Icon( );
         bool Icon( const int ms );
 
-        void SetProgramImage( const string ms );
+        void ProgramImage( const string ms );
 
         string ButtonText( const int ms );
         bool ButtonText( const int num, const string ms );
@@ -48,8 +52,14 @@ class Graphics
         string Path( );
         void Path( const string ms );
 
-        bool GetDirectory( const string ms );
+        int ID( );
+        void ID( const int given_id );
+
+        string Title( );
+        void Title( const string given_title );
+
         int ShowMessage( );
+        bool GetDirectory( const string ms );
 
         void Redraw( );
     };

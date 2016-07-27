@@ -5,12 +5,31 @@
 
 using namespace std;
 
-int button_quantity;
+int button_quantity, window_id, parent_id;
 long button_alignment, icon_id, default_button;
 string button_1_string, button_2_string, button_3_string;
 string default_path;
 string frame_image_file_name;
 string message_string, message_title;
+wxString window_title;
+
+int Graphics::Parent( )
+    {
+    return this->parent_id;
+    }
+void Graphics::Parent( const int given_id )
+    {
+    this->parent_id = given_id;
+    }
+
+int Graphics::ID( )
+    {
+    return this->window_id;
+    }
+void Graphics::ID( const int given_id )
+    {
+    this->window_id = given_id;
+    }
 
 string Graphics::MessageString( )
     {
@@ -28,6 +47,15 @@ string Graphics::MessageTitle( )
 void Graphics::MessageTitle( const string ms )
     {
     this->message_title = ms;
+    }
+
+string Graphics::Title( )
+    {
+    return string( this->window_title.ToAscii( ));
+    }
+void Graphics::Title( const string ms )
+    {
+    this->window_title.FromAscii( ms.c_str( ));
     }
 
 int Graphics::Icon( )
@@ -99,7 +127,7 @@ bool Graphics::Icon( const int ms )
     return false;
     }
 
-void Graphics::SetProgramImage( const string name )
+void Graphics::ProgramImage( const string name )
     {
     wxString FileName = name;
     wxIcon ImageFile( FileName, wxBITMAP_TYPE_JPEG, -1 );
@@ -379,6 +407,8 @@ Graphics::Graphics( )
     this->icon_id = wxICON_NONE;
     this->message_string = "";
     this->message_title = "";
+    this->window_id = 0;
+    this->window_title = "";
     };
 
 #endif

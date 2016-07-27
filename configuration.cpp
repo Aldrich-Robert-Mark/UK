@@ -4,25 +4,25 @@ bool config_ok = true;
 string config_program_name = "\0";
 string config_base_path = "\0";
 string config_database = "\0";
-string folder_names[ 8 ];
-string program_image = "\0";
+string config_folder_names[ 8 ];
+string config_program_image = "\0";
 Point config_origin[ 9 ];
 Point config_size[ 9 ];
 
 // =================================================================================
-string Configuration::GetProgramImage( )
+string Configuration::ProgramImage( )
     {
-    return program_image;
+    return config_program_image;
     }
 
 // =================================================================================
-void Configuration::SetProgramImage( const string name )
+void Configuration::ProgramImage( const string name )
     {
-    this->program_image = name;
+    this->config_program_image = name;
     }
 
 // =================================================================================
-string Configuration::GetProgramName( )
+string Configuration::ProgramName( )
     {
     return config_program_name;
     }
@@ -34,31 +34,31 @@ bool Configuration::OK( )
     }
 
 // =================================================================================
-Point Configuration::GetOrigin( const FrameTitle frame_id )
+Point Configuration::Origin( const FrameTitle frame_id )
     {
     return config_origin[ frame_id ];
     }
 
 // =================================================================================
-void Configuration::SetOrigin( const FrameTitle frame_id, const Point point )
+void Configuration::Origin( const FrameTitle frame_id, const Point point )
     {
     config_origin[ frame_id ] = point;
     }
 
 // =================================================================================
-Point Configuration::GetSize( const FrameTitle frame_id )
+Point Configuration::Size( const FrameTitle frame_id )
     {
     return config_size[ frame_id ];
     }
 
 // =================================================================================
-void Configuration::SetSize( const FrameTitle frame_id, const Point point )
+void Configuration::Size( const FrameTitle frame_id, const Point point )
     {
     config_size[ frame_id ] = point;
     }
 
 // =================================================================================
-string Configuration::GetBasePath( )
+string Configuration::BasePath( )
     {
     return config_base_path;
     }
@@ -122,15 +122,15 @@ Configuration::Configuration( string program_name )
 
     this->config_program_name = program_name;
     this->config_ok = true;
-    this->folder_names[ TOPLEVEL ] = ".";
-    this->folder_names[ LETTERS ] = "letters";
-    this->folder_names[ ENVELOPES ] = "envelopes";
-    this->folder_names[ ADDRESSING ] = "addressing";
-    this->folder_names[ OUTGOING ] = "outgoing";
-    this->folder_names[ INCOMING ] = "incoming";
-    this->folder_names[ RECEIVED ] = "received";
-    this->folder_names[ ARCHIVE_LOCAL_ORIGIN ] = "archive_local_origin";
-    this->folder_names[ ARCHIVE_REMOTE_ORIGIN ] = "archive_remote_origin";
+    this->config_folder_names[ TOPLEVEL ] = ".";
+    this->config_folder_names[ LETTERS ] = "letters";
+    this->config_folder_names[ ENVELOPES ] = "envelopes";
+    this->config_folder_names[ ADDRESSING ] = "addressing";
+    this->config_folder_names[ OUTGOING ] = "outgoing";
+    this->config_folder_names[ INCOMING ] = "incoming";
+    this->config_folder_names[ RECEIVED ] = "received";
+    this->config_folder_names[ ARCHIVE_LOCAL_ORIGIN ] = "archive_local_origin";
+    this->config_folder_names[ ARCHIVE_REMOTE_ORIGIN ] = "archive_remote_origin";
 
     this->ResetFrames( );
     Screen.Redraw( );
@@ -188,14 +188,14 @@ Configuration::Configuration( string program_name )
     if( this->config_ok )
         {
         // Name the image file used for the windows
-        SetProgramImage( this->config_base_path + slash + this->config_program_name + ".jpg" );
-        Screen.SetProgramImage( this->GetProgramImage( ));
+        ProgramImage( this->config_base_path + slash + this->config_program_name + ".jpg" );
+        Screen.ProgramImage( ProgramImage( ));
         }
 
     if( this->config_ok )
         {
         // The ini file has been found. Check for proper directories.
-        for( string folder_name : this->folder_names )
+        for( string folder_name : this->config_folder_names )
             {
             if( !Disk.DirExists( this->config_base_path + slash + folder_name ))
                 {
@@ -253,13 +253,13 @@ Configuration::Configuration( string program_name )
                     {
                     parameter_name = "size_";
                     }
-                parameter_name += folder_names[i];
+                parameter_name += config_folder_names[i];
                 if( !ConfigurationFile.Get( parameter_name, this->config_origin[i] ))
                     {
                     Screen.MessageTitle( "Configuration file problem" );
                     message_string = "Could not read the configuration file.\n";
                     message_string += "Trying to get the \"config_origin[";
-                    message_string += folder_names[i];
+                    message_string += config_folder_names[i];
                     message_string += "]\".\nThe error message is \"";
                     message_string += ConfigurationFile.Error( );
                     message_string += "\".";

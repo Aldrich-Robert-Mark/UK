@@ -17,24 +17,29 @@ class Configuration
     public:
         Configuration( string program_name );
         bool OK( );
-        string GetBasePath( );
-        string GetProgramName( );
-        string GetProgramImage( );
+        string BasePath( );
+
+        string ProgramName( );
+        void ProgramName( const string program_name );
+
+        string ProgramImage( );
+        void ProgramImage( const string file_name );
+
         void ResetFrames( );
-        void SetProgramName( const string program_name );
-        void SetOrigin( const FrameTitle frame_id, const Point point );
-        void SetSize( const FrameTitle frame_id, const Point size );
-        void SetProgramImage( const string file_name );
-        Point GetOrigin( const FrameTitle frame_id );
-        Point GetSize( const FrameTitle frame_id );
+
+        void Size( const FrameTitle frame_id, const Point size );
+        Point Size( const FrameTitle frame_id );
+
+        void Origin( const FrameTitle frame_id, const Point point );
+        Point Origin( const FrameTitle frame_id );
 
     private:
         bool config_ok;
         string config_program_name;
         string config_base_path;
         string config_database;
-        string folder_names[ 8 ];
-        string program_image;
+        string config_folder_names[ 8 ];
+        string config_program_image;
         Point config_origin[ 9 ];
         Point config_size[ 9 ];
     };

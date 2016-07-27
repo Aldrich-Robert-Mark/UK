@@ -20,6 +20,11 @@
 
 using namespace std;
 
+// Implements MainProgram GetApp( )
+DECLARE_APP( MainProgram )
+
+// Give wxWidgets the means to create a MainProgram object
+IMPLEMENT_APP( MainProgram )
 
 // Initialize the application
 bool MainProgram::OnInit( )
@@ -32,16 +37,23 @@ bool MainProgram::OnInit( )
         {
         return false;
         }
-/*
+
     // Create the main application window
-    TopLevel window( &Config );
+/*
+    Graphics TopLevel;
+    TopLevel.Parent( TOPLEVEL );
+    TopLevel.ID( TOPLEVEL );
+    TopLevel.Title( Config.ProgramName( ));
+    TopLevel.Path( Config.BasePath( ));
+*/
+cout << "Starting TopLevel\n";
+    TopLevel *Top = new TopLevel( &Config );
+
+/*
     // Show it
-    window.Show( true );
+    Top->Show( true );
+*/
 
     // Start the event loop
-*/
-    return false;
+    return true;
     }
-
-// Give wxWidgets the means to create a MainProgram object
-IMPLEMENT_APP( MainProgram )
