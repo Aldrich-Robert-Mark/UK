@@ -39,20 +39,7 @@ bool MainProgram::OnInit( )
         }
 
     // Create the main application window
-/*
-    Graphics TopLevel;
-    TopLevel.Parent( TOPLEVEL );
-    TopLevel.ID( TOPLEVEL );
-    TopLevel.Title( Config.ProgramName( ));
-    TopLevel.Path( Config.BasePath( ));
-*/
-cout << "Starting TopLevel\n";
     TopLevel *Top = new TopLevel( &Config );
-
-/*
-    // Show it
-    Top->Show( true );
-*/
 
     // Start the event loop
     return true;

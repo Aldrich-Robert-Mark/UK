@@ -18,9 +18,10 @@ class Data
         // Functions
         Data( const string filename );
         string Error( );
-        bool Get( const string parameter, const string value );
-        bool Get( const string parameter, const Point value );
+        bool Get( const string parameter, string *value );
+        bool Get( const string parameter, Point *value );
         bool Save( const string parameter, const string value );
+        bool Save( const string parameter, const Point value );
 
     private:
         // Functions
@@ -30,6 +31,7 @@ class Data
         bool Close( );
 
         // Variables
+        bool sql_results;
         Point sql_results_p;
         string error_message, file_name, sql_results_s;
         typedef struct sqlite3_stmt sqlite3_statement;

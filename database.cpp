@@ -2,6 +2,7 @@
 
 using namespace std;
 
+bool sql_results;
 Point sql_results_p;
 string error_message, file_name, sql_results_s;
 typedef struct sqlite3_stmt sqlite3_statement;
@@ -32,7 +33,7 @@ bool Data::Open( )
     }
 
 // =================================================================================
-bool Data::Get( const string parameter, string value )
+bool Data::Get( const string parameter, string *value )
     {
     // Open the database
     if( !Open( ))
@@ -46,11 +47,20 @@ bool Data::Get( const string parameter, string value )
         return false;
         }
     // Send the SQL command to the database engine
+    this->sql_results = false;
     if( !RunSQL( RUN ))
         {
         return false;
         }
-    value = sql_results_s;
+    if( this->sql_results )
+        {
+        *value = this->sql_results_s;
+        }
+    else
+        {
+        this->error_message = "No values for " + parameter;
+        return false;
+        }
     // Finalize the SQL statement
     if( !RunSQL( FINALIZE ))
         {
@@ -58,8 +68,39 @@ bool Data::Get( const string parameter, string value )
         }
     return true;
     }
-bool Data::Get( const string parameter, const Point value )
+bool Data::Get( const string parameter, Point *value )
     {
+    // Open the database
+    if( !Open( ))
+        {
+        return false;
+        }
+    // Prepare the SQL command
+    sprintf( this->sql_statement, "SELECT * FROM two WHERE parameter = \"%s\"", parameter.c_str( ));
+    if( !RunSQL( PREPARE ))
+        {
+        return false;
+        }
+    // Send the SQL command to the database engine
+    this->sql_results = false;
+    if( !RunSQL( RUN ))
+        {
+        return false;
+        }
+    if( this->sql_results )
+        {
+        *value = this->sql_results_p;
+        }
+    else
+        {
+        this->error_message = "No values for " + parameter;
+        return false;
+        }
+    // Finalize the SQL statement
+    if( !RunSQL( FINALIZE ))
+        {
+        return false;
+        }
     return true;
     }
 
@@ -114,6 +155,56 @@ bool Data::Save( const string parameter, const string value )
     }
 
 // =================================================================================
+bool Data::Save( const string parameter, const Point value )
+    {
+    // Open the database
+    if( !Open( ))
+        {
+        return false;
+        }
+    // Prepare the SQL command to delete any previous values
+    sprintf( this->sql_statement, "DELETE FROM two WHERE parameter = \"%s\"", parameter.c_str( ));
+    if( !RunSQL( PREPARE ))
+        {
+        return false;
+        }
+    // Send the SQL command to the database engine
+    if( !RunSQL( RUN ))
+        {
+        return false;
+        }
+    // Finalize the SQL statement
+    if( !RunSQL( FINALIZE ))
+        {
+        return false;
+        }
+
+    // Prepare the SQL command, i.e. compile it
+    sprintf( this->sql_statement, "INSERT INTO two ( parameter, x, y ) VALUES ( \"%s\", \"%f\", \"%f\" )", parameter.c_str( ), value.x, value.y);
+    if( !RunSQL( PREPARE ))
+        {
+        return false;
+        }
+    // Send the SQL command to the database engine
+    if( !RunSQL( RUN ))
+        {
+        return false;
+        }
+    // Finalize the SQL statement
+    if( !RunSQL( FINALIZE ))
+        {
+        return false;
+        }
+
+    // Close the database
+    if( !Close( ))
+        {
+        return false;
+        }
+    return true;
+    }
+
+// =================================================================================
 bool Data::RunSQL( const int function_type )
     {
     this->error_message = "";
@@ -129,6 +220,7 @@ bool Data::RunSQL( const int function_type )
             }
         if( return_code == SQLITE_ROW )
             {
+            this->sql_results = true;
             switch( sqlite3_column_count( this->compiled_sql ))
                 {
                 case 2:

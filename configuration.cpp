@@ -1,11 +1,11 @@
 #include "configuration.h"
 
 bool config_ok = true;
-string config_program_name = "\0";
-string config_base_path = "\0";
-string config_database = "\0";
-string config_folder_names[ 8 ];
-string config_program_image = "\0";
+string config_program_name = "";
+string config_base_path = "";
+string config_database = "";
+string config_folder_names[ 9 ];
+string config_program_image = "";
 Point config_origin[ 9 ];
 Point config_size[ 9 ];
 
@@ -70,7 +70,7 @@ void Configuration::ResetFrames()
     // Reset the origin points
     Point pt;
     pt.x = 0.0;
-    pt.y = 0.0;
+    pt.y = 50.0;
     config_origin[ TOPLEVEL ] = pt;
     config_origin[ LETTERS ] = pt;
     pt.y = 200.0;
@@ -132,8 +132,7 @@ Configuration::Configuration( string program_name )
     this->config_folder_names[ ARCHIVE_LOCAL_ORIGIN ] = "archive_local_origin";
     this->config_folder_names[ ARCHIVE_REMOTE_ORIGIN ] = "archive_remote_origin";
 
-    this->ResetFrames( );
-    Screen.Redraw( );
+//    this->ResetFrames( );
     // working_path may be adjusted to find the configuration file
     this->config_base_path = Disk.GetUserDataDir( );
 
@@ -241,36 +240,45 @@ Configuration::Configuration( string program_name )
         // Read the saved data points for the frames
         for( int i = 0; i < 9; i++ )
             {
-            // Read the origin points and size for the frames
-            string parameter_name;
-            for( int j = 0 ; j < 2 ; j++ )
+            // Read the origin points for the frames
+            string parameter_name = "origin_" + config_folder_names[i];
+            if( !ConfigurationFile.Get( parameter_name, &this->config_origin[i] ))
                 {
-                if( j == 0 )
-                    {
-                    parameter_name = "origin_";
-                    }
-                else
-                    {
-                    parameter_name = "size_";
-                    }
-                parameter_name += config_folder_names[i];
-                if( !ConfigurationFile.Get( parameter_name, this->config_origin[i] ))
-                    {
-                    Screen.MessageTitle( "Configuration file problem" );
-                    message_string = "Could not read the configuration file.\n";
-                    message_string += "Trying to get the \"config_origin[";
-                    message_string += config_folder_names[i];
-                    message_string += "]\".\nThe error message is \"";
-                    message_string += ConfigurationFile.Error( );
-                    message_string += "\".";
-                    Screen.MessageString( message_string );
-                    Screen.ButtonQuantity( 1 );
-                    Screen.ButtonText( 1, "OK" );
-                    Screen.Icon( 1 );
-                    Screen.ShowMessage( );
-                    this->config_ok = false;
-                    }
+                Screen.MessageTitle( "Configuration file problem" );
+                message_string = "Could not read the configuration file.\n";
+                message_string += "Trying to get the \"config_origin[";
+                message_string += config_folder_names[i];
+                message_string += "]\".\nThe error message is \"";
+                message_string += ConfigurationFile.Error( );
+                message_string += "\".";
+                Screen.MessageString( message_string );
+                Screen.ButtonQuantity( 1 );
+                Screen.ButtonText( 1, "OK" );
+                Screen.Icon( 1 );
+                Screen.ShowMessage( );
+                this->config_ok = false;
                 }
             }
-        };
+        for( int i = 0; i < 9; i++ )
+            {
+            // Read the origin points for the frames
+            string parameter_name = "size_" + config_folder_names[i];
+            if( !ConfigurationFile.Get( parameter_name, &this->config_size[i] ))
+                {
+                Screen.MessageTitle( "Configuration file problem" );
+                message_string = "Could not read the configuration file.\n";
+                message_string += "Trying to get the \"config_origin[";
+                message_string += config_folder_names[i];
+                message_string += "]\".\nThe error message is \"";
+                message_string += ConfigurationFile.Error( );
+                message_string += "\".";
+                Screen.MessageString( message_string );
+                Screen.ButtonQuantity( 1 );
+                Screen.ButtonText( 1, "OK" );
+                Screen.Icon( 1 );
+                Screen.ShowMessage( );
+                this->config_ok = false;
+                }
+            }
+        }
     };

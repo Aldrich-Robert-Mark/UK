@@ -1,6 +1,3 @@
-#ifndef _GRAPHICS_CPP
-#define _GRAPHICS_CPP
-
 #include "graphics.h"
 
 using namespace std;
@@ -409,6 +406,6 @@ Graphics::Graphics( )
     this->message_title = "";
     this->window_id = 0;
     this->window_title = "";
+    Create( NULL, wxID_ANY, this->window_title );
     };
 
-#endif

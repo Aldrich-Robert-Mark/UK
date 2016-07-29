@@ -11,15 +11,6 @@ using namespace std;
 
 class Graphics : public wxFrame
     {
-    private:
-        int button_quantity, window_id, parent_id;
-        long button_alignment, icon_id, default_button;
-        string button_1_string, button_2_string, button_3_string;
-        string default_path;
-        string frame_image_file_name;
-        string message_string, message_title;
-        wxString window_title;
-
     public:
         Graphics( );
 
@@ -62,6 +53,15 @@ class Graphics : public wxFrame
         bool GetDirectory( const string ms );
 
         void Redraw( );
+
+    private:
+        int button_quantity, window_id, parent_id;
+        long button_alignment, icon_id, default_button;
+        string button_1_string, button_2_string, button_3_string;
+        string default_path;
+        string frame_image_file_name;
+        string message_string, message_title;
+        wxString window_title;
     };
 
 #endif

@@ -38,7 +38,7 @@ class Configuration
         string config_program_name;
         string config_base_path;
         string config_database;
-        string config_folder_names[ 8 ];
+        string config_folder_names[ 9 ];
         string config_program_image;
         Point config_origin[ 9 ];
         Point config_size[ 9 ];
