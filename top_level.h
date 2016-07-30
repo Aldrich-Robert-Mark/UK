@@ -13,17 +13,7 @@ class TopLevel : public wxFrame
         // Constructor
         TopLevel( Configuration *config );
 
-        // Event handlers
-        void OnQuit( wxCommandEvent& event );
-
     private:
-        Point Position( );
-        void Position( const Point ip );
-        Point Size( );
-        void Size( const Point ip );
-
-        // This class handles events
-        DECLARE_EVENT_TABLE( );
-    };
+ 
 
 #endif

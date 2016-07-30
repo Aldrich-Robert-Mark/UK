@@ -4,6 +4,7 @@
 #include <string>
 #include <wx/wx.h>
 
+#include "configuration.h"
 #include "os.h"
 
 using namespace std;
@@ -13,9 +14,10 @@ class Graphics : public wxFrame
     {
     public:
         Graphics( );
+        Graphics( Configuration *config );
 
-        int Parent( );
-        void Parent( const int given_id );
+        wxWindowID Parent( );
+        void Parent( const wxWindowID given_id );
 
         string MessageString( );
         void MessageString( const string ms );
@@ -43,8 +45,8 @@ class Graphics : public wxFrame
         string Path( );
         void Path( const string ms );
 
-        int ID( );
-        void ID( const int given_id );
+        wxWindowID ID( );
+        void ID( const wxWindowID given_id );
 
         string Title( );
         void Title( const string given_title );
@@ -54,14 +56,29 @@ class Graphics : public wxFrame
 
         void Redraw( );
 
+        // Event handlers
+        void OnQuit( wxCommandEvent& event );
+
     private:
-        int button_quantity, window_id, parent_id;
+        // Variables
+        int button_quantity;
         long button_alignment, icon_id, default_button;
         string button_1_string, button_2_string, button_3_string;
         string default_path;
         string frame_image_file_name;
         string message_string, message_title;
         wxString window_title;
+        wxWindowID window_id, parent_id;
+
+        // Methods
+        Point Position( );
+        void Position( const Point ip );
+        Point Size( );
+        void Size( const Point ip );
+        void ResetFrames( );
+
+        // This class handles events
+        DECLARE_EVENT_TABLE( );
     };
 
 #endif

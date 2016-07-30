@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "configuration.h"
-#include "top_level.h"
+#include "graphics.h"
 
 // DEFINE THE STRUCTURE OF THE MAIN PROGRAM
 

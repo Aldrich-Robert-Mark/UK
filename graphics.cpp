@@ -2,28 +2,29 @@
 
 using namespace std;
 
-int button_quantity, window_id, parent_id;
+int button_quantity;
 long button_alignment, icon_id, default_button;
 string button_1_string, button_2_string, button_3_string;
 string default_path;
 string frame_image_file_name;
 string message_string, message_title;
 wxString window_title;
+wxWindowID window_id, parent_id;
 
-int Graphics::Parent( )
+wxWindowID Graphics::Parent( )
     {
     return this->parent_id;
     }
-void Graphics::Parent( const int given_id )
+void Graphics::Parent( const wxWindowID given_id )
     {
     this->parent_id = given_id;
     }
 
-int Graphics::ID( )
+wxWindowID Graphics::ID( )
     {
     return this->window_id;
     }
-void Graphics::ID( const int given_id )
+void Graphics::ID( const wxWindowID given_id )
     {
     this->window_id = given_id;
     }
@@ -292,6 +293,21 @@ bool Graphics::ButtonQuantity( const int ms )
     return false;
     }
 
+bool Graphics::GetDirectory( string new_path )
+    {
+    wxDirDialog DD(
+        NULL,
+        this->message_string.c_str( ),
+        this->default_path.c_str( ),
+        wxDD_DEFAULT_STYLE );
+    if( DD.ShowModal( ) == wxID_OK )
+        {
+        new_path = DD.GetPath( ).ToAscii( );
+        return true;
+        }
+    return false;
+    }
+
 string Graphics::Path( )
     {
     return this->default_path;
@@ -299,6 +315,35 @@ string Graphics::Path( )
 void Graphics::Path( const string ms )
     {
     this->default_path = ms;
+    }
+
+Point Graphics::Size( )
+    {
+    Point op;
+    int *pix = &op.x, *piy = &op.y;
+    GetSize( pix, piy );
+    return op;
+    }
+void Graphics::Size( const Point ip )
+    {
+    SetSize( ip.x, ip.y );
+    }
+
+Point Graphics::Position( )
+    {
+    Point op;
+    int *pix = &op.x, *piy = &op.y;
+    GetPosition( pix, piy );
+    return op;
+    }
+void Graphics::Position( const Point ip )
+    {
+    SetPosition( wxPoint( ip.x, ip.y ));
+    }
+
+void Graphics::ResetFrames( )
+    {
+    // config->ResetFrames( )
     }
 
 
@@ -368,24 +413,15 @@ int Graphics::ShowMessage( )
     return -1;
     };
 
-bool Graphics::GetDirectory( string new_path )
-    {
-    wxDirDialog DD(
-        NULL,
-        this->message_string.c_str( ),
-        this->default_path.c_str( ),
-        wxDD_DEFAULT_STYLE );
-    if( DD.ShowModal( ) == wxID_OK )
-        {
-        new_path = DD.GetPath( ).ToAscii( );
-        return true;
-        }
-    return false;
-    }
-
 void Graphics::Redraw( )
     {
     // Put code here
+    }
+
+void Graphics::OnQuit( wxCommandEvent& event )
+    {
+    // Destroy the level
+    Close( );
     }
 
 
@@ -404,8 +440,50 @@ Graphics::Graphics( )
     this->icon_id = wxICON_NONE;
     this->message_string = "";
     this->message_title = "";
-    this->window_id = 0;
     this->window_title = "";
-    Create( NULL, wxID_ANY, this->window_title );
+    };
+Graphics::Graphics( Configuration *config )
+    {
+    const FrameTitle frame_id = TOPLEVEL;
+    ID( NewControlId( 1 ));
+    char frame_title[16];
+    strcpy( frame_title, config->ProgramName( ).c_str( ));
+    frame_title[0] = toupper( frame_title[0] );
+    wxString title( frame_title );
+    Create( NULL, this->window_id, title );
+
+    // Set the options for the frame
+    wxIcon set_icon;
+    set_icon.LoadFile( config->ProgramImage( ), wxBITMAP_TYPE_JPEG, -1, -1 );
+    SetIcon( set_icon );
+    Position( config->Origin( frame_id ));
+    Size( config->Size( frame_id ));
+
+    // Set up the menu system
+    switch( frame_id )
+        {
+        case TOPLEVEL:
+            {
+            wxMenu *FileSubMenu = new wxMenu;
+            FileSubMenu->Append( wxID_EXIT, _( "E&xit\tAlt-X" ), _( "Quit this program" ));
+            wxMenu *ConfigurationSubMenu = new wxMenu;
+            ConfigurationSubMenu->Append( RESET_WINDOWS, wxT( "&Reset Screen" ), wxT( "Change window layout to factory defaults" ));
+            wxMenuBar *TopLevelMenuBar = new wxMenuBar( );
+            TopLevelMenuBar->Append( FileSubMenu, wxT( "&File" ));
+            TopLevelMenuBar->Append( ConfigurationSubMenu, wxT( "&Configure" ));
+            SetMenuBar( TopLevelMenuBar );
+            break;
+            }
+        default:
+            {
+            break;
+            }
+        }
+    Show( true );
     };
 
+// Event table for Graphics
+BEGIN_EVENT_TABLE( Graphics, wxFrame )
+    EVT_MENU( wxID_EXIT, Graphics::OnQuit )
+//  EVT_MENU( RESET_WINDOWS, Graphics::ResetFrames )
+END_EVENT_TABLE( )

@@ -23,4 +23,9 @@ enum DatabaseOperations
     FINALIZE    = 4
     };
 
+enum WindowControl
+    {
+    RESET_WINDOWS       = 0
+    };
+
 #endif

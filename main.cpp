@@ -39,7 +39,8 @@ bool MainProgram::OnInit( )
         }
 
     // Create the main application window
-    TopLevel *Top = new TopLevel( &Config );
+    Graphics *Top = new Graphics( &Config );
+    //Graphics TopLevel( &Config );
 
     // Start the event loop
     return true;

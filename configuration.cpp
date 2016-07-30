@@ -1,30 +1,32 @@
 #include "configuration.h"
 
-bool config_ok = true;
-string config_program_name = "";
-string config_base_path = "";
-string config_database = "";
-string config_folder_names[ 9 ];
-string config_program_image = "";
-Point config_origin[ 9 ];
-Point config_size[ 9 ];
+#include "os.h"
+#include "database.h"
+#include "graphics.h"
+
+bool    config_ok = true;
+string  config_program_name = "";
+string  config_base_path = "";
+string  config_database = "";
+string  config_folder_names[ 9 ];
+string  config_program_image = "";
+Point   config_origin[ 9 ];
+Point   config_size[ 9 ];
 
 // =================================================================================
-string Configuration::ProgramImage( )
+string Configuration::BasePath( )
     {
-    return config_program_image;
+    return config_base_path;
     }
 
 // =================================================================================
-void Configuration::ProgramImage( const string name )
+string Configuration::FolderName( const int level )
     {
-    this->config_program_image = name;
+    return config_folder_names[ level ];
     }
-
-// =================================================================================
-string Configuration::ProgramName( )
+void Configuration::FolderName( const int level, const string folder_name )
     {
-    return config_program_name;
+    config_folder_names[ level ] = folder_name;
     }
 
 // =================================================================================
@@ -38,34 +40,30 @@ Point Configuration::Origin( const FrameTitle frame_id )
     {
     return config_origin[ frame_id ];
     }
-
-// =================================================================================
 void Configuration::Origin( const FrameTitle frame_id, const Point point )
     {
     config_origin[ frame_id ] = point;
     }
 
 // =================================================================================
-Point Configuration::Size( const FrameTitle frame_id )
+string Configuration::ProgramImage( )
     {
-    return config_size[ frame_id ];
+    return config_program_image;
+    }
+void Configuration::ProgramImage( const string name )
+    {
+    this->config_program_image = name;
     }
 
 // =================================================================================
-void Configuration::Size( const FrameTitle frame_id, const Point point )
+string Configuration::ProgramName( )
     {
-    config_size[ frame_id ] = point;
-    }
-
-// =================================================================================
-string Configuration::BasePath( )
-    {
-    return config_base_path;
+    return config_program_name;
     }
 
 // =================================================================================
 // Set all frames to the default settingss
-void Configuration::ResetFrames()
+void Configuration::DefaultFrames()
     {
     // Reset the origin points
     Point pt;
@@ -107,6 +105,16 @@ void Configuration::ResetFrames()
     config_size[ ARCHIVE_LOCAL_ORIGIN ] = pt;
     config_size[ ARCHIVE_REMOTE_ORIGIN ] = pt;
 
+    }
+
+// =================================================================================
+Point Configuration::Size( const FrameTitle frame_id )
+    {
+    return config_size[ frame_id ];
+    }
+void Configuration::Size( const FrameTitle frame_id, const Point point )
+    {
+    config_size[ frame_id ] = point;
     }
 
 // =================================================================================
