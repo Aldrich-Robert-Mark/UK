@@ -6,6 +6,30 @@ I started this program to provide secure (encrypted) mail through the internet. 
 I am stepping into this journal at a fairly early point in the development process, but not at the beginning, like I should have. I have built the section which reads and writes the configuration. I have also separated the GUI into it's own class. I am not sure at this point how/if I can keep the GUI separated.
 
 The current state of the project is still local and the top-level or master window is displayed with a pull down file menu consisting only of a quit option which stops the program. At this point, I will save and restore the origin and size of this top window.
+
+I am having difficulty getting the wxGridBagSizer function to work. Currently the code is:
+<code>
+    wxColour col1, col2;
+    col1.Set(wxT("#00ff00"));
+    col2.Set(wxT("#ff0000"));
+
+    wxPanel *panel = new wxPanel(this, -1);
+    panel->SetBackgroundColour(col1);
+
+    layout->Add( panel1, wxGBPosition( 1, 1 ));
+    panel->SetSizer( layout );
+
+    wxGridBagSizer *vbox = new wxGridBagSizer( );
+    gbSizer1 = wx.GridBagSizer( 0, 0 )
+    wxGBPosition( 1, 1 )
+
+    wxPanel *midPan = new wxPanel(panel, wxID_ANY);
+    midPan->SetBackgroundColour(col2);
+
+    vbox->Add( panel, );
+    panel->SetSizer(vbox);
+</code>
+When I change the GridBagSizer to a BoxSizer (plus other changes), I can get a red background with a green square in the middle, like I expect. With the GridBagSizer, I do not see anything.
 </body>
 </html>
 

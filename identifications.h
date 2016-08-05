@@ -10,8 +10,8 @@ enum FrameTitle
     OUTGOING    = 4,
     INCOMING    = 5,
     RECEIVED    = 6,
-    ARCHIVE_LOCAL_ORIGIN  = 7,
-    ARCHIVE_REMOTE_ORIGIN = 8
+    ARCHIVE_LOCAL  = 7,
+    ARCHIVE_REMOTE = 8
     };
 
 enum DatabaseOperations
@@ -25,7 +25,15 @@ enum DatabaseOperations
 
 enum WindowControl
     {
-    RESET_WINDOWS       = 0
+    RESET_WINDOWS               = 0,
+    ID_LETTERS_WINDOW           = 1,
+    ID_ENVELOPES_WINDOW         = 2,
+    ID_ADDRESSING_WINDOW        = 3,
+    ID_OUTGOING_WINDOW          = 4,
+    ID_INCOMING_WINDOW          = 5,
+    ID_RECEIVED_WINDOW          = 6,
+    ID_LOCAL_WINDOW             = 7,
+    ID_REMOTE_WINDOW            = 8
     };
 
 #endif

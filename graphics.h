@@ -3,9 +3,11 @@
 
 #include <string>
 #include <wx/wx.h>
+#include <wx/gbsizer.h>
 
+#include "identifications.h"
+#include "point_def.h"
 #include "configuration.h"
-#include "os.h"
 
 using namespace std;
 
@@ -13,69 +15,41 @@ using namespace std;
 class Graphics : public wxFrame
     {
     public:
-        Graphics( );
-        Graphics( Configuration *config );
+        Graphics( Configuration *Config );
+        Graphics( const FrameTitle frame_id, wxFrame *parent_window, Configuration *Config );
 
-        wxWindowID Parent( );
-        void Parent( const wxWindowID given_id );
-
-        string MessageString( );
-        void MessageString( const string ms );
-
-        string MessageTitle( );
-        void MessageTitle( const string ms );
-
-        int Icon( );
-        bool Icon( const int ms );
-
-        void ProgramImage( const string ms );
-
-        string ButtonText( const int ms );
-        bool ButtonText( const int num, const string ms );
-
-        char ButtonAlign( );
-        bool ButtonAlign( const char ms );
-
-        int DefaultButton( );
-        bool DefaultButton( const int ms );
-
-        int ButtonQuantity( );
-        bool ButtonQuantity( const int ms );
-
-        string Path( );
-        void Path( const string ms );
+        string Icon( );
+        void Icon( const string file_name );
 
         wxWindowID ID( );
         void ID( const wxWindowID given_id );
 
+        void Menu( const FrameTitle frame_id );
+
         string Title( );
         void Title( const string given_title );
 
-        int ShowMessage( );
-        bool GetDirectory( const string ms );
+        wxPoint P2wxP( const Point ip );
+        wxSize P2wxS( const Point ip );
+
+        Point Position( );
+        void Position( const Point ip );
 
         void Redraw( );
+
+        Point Size( );
+        void Size( const Point ip );
 
         // Event handlers
         void OnQuit( wxCommandEvent& event );
 
     private:
         // Variables
-        int button_quantity;
-        long button_alignment, icon_id, default_button;
-        string button_1_string, button_2_string, button_3_string;
-        string default_path;
-        string frame_image_file_name;
-        string message_string, message_title;
-        wxString window_title;
+        FrameTitle frame_id;
+        string frame_image, window_title;
         wxWindowID window_id, parent_id;
 
         // Methods
-        Point Position( );
-        void Position( const Point ip );
-        Point Size( );
-        void Size( const Point ip );
-        void ResetFrames( );
 
         // This class handles events
         DECLARE_EVENT_TABLE( );

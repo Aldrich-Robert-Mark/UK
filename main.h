@@ -2,6 +2,7 @@
 #define _MAIN_H
 
 #include <string.h>
+#include <iostream>
 
 #include "configuration.h"
 #include "graphics.h"

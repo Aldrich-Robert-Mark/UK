@@ -11,9 +11,11 @@ using namespace std;
 class Configuration
     {
     public:
-        Configuration( string program_name );
+        Configuration( const string program_name );
         bool    OK( );
-        string  BasePath( );
+
+        string  Path( );
+        void    Path( const string file_name );
 
         string  FrameName( const int level );
         void    FrameName( const int level, const string folder_name );
@@ -32,8 +34,8 @@ class Configuration
         Point   Size( const FrameTitle frame_id );
         void    Size( const FrameTitle frame_id, const Point size );
 
-        Point   Origin( const FrameTitle frame_id );
-        void    Origin( const FrameTitle frame_id, const Point point );
+        Point   Position( const FrameTitle frame_id );
+        void    Position( const FrameTitle frame_id, const Point point );
 
     private:
         bool   config_ok;

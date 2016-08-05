@@ -21,10 +21,14 @@ char OS::Slash( )
     {
     return (char) wxFileName::GetPathSeparator( ).GetValue( );
     }
-string OS::GetUserDataDir( )
+string OS::UserDataDir( )
     {
     wxStandardPaths StandardPaths = wxStandardPaths::Get( );
     return string( StandardPaths.GetUserDataDir( ));
+    }
+string OS::HomeDir( )
+    {
+    return string( wxGetHomeDir( ));
     }
 
 #endif
