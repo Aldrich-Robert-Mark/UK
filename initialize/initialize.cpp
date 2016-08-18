@@ -1,96 +1,116 @@
 ////////////////////////////////////////////////////////////////////////////////////
-int check_directory_structure( Configuration config_db )
+int check_directory_structure( const string path )
     {
     // This routine checks for proper directory structure
 
-    char *test_directory;
-    int i, return_code = 0;
+    int
+        return_code = 0;
 
 
     // The "letters" directory should hold original documents
     if( return_code == 0 )
         {
-        return_code = make_directory( config_db.base_path, "letters" );
+        return_code = make_directory( path, "letters" );
         }
 
-    // The "envelopes" directory should hold unused envelopes
+    // The "envelopes" directory should hold envelopes and their contents
     if( return_code == 0 )
         {
-        return_code = make_directory( config_db.base_path, "envelopes" );
+        return_code = make_directory( path, "envelopes" );
         }
 
-    // The "working" directory should hold anything in the process of going out
+    // The "addressing" directory should hold anything in the process of going out
     if( return_code == 0 )
         {
-        return_code = make_directory( config_db.base_path, "working" );
+        return_code = make_directory( path, "addressing" );
         }
 
     // The "outgoing" directory should hold things ready to send
     if( return_code == 0 )
         {
-        return_code = make_directory( config_db.base_path, "outgoing" );
+        return_code = make_directory( path, "outgoing" );
         }
 
     // The "incoming" directory should hold things received but not processed
     if( return_code == 0 )
         {
-        return_code = make_directory( config_db.base_path, "incoming" );
+        return_code = make_directory( path, "incoming" );
         }
 
-    // The "opened" directory should hold things received and processed
+    // The "received" directory should hold things received and processed
     if( return_code == 0 )
         {
-        return_code = make_directory( config_db.base_path, "opened" );
+        return_code = make_directory( path, "received" );
+        }
+
+    // The "archive_local" directory should hold archived things created locally
+    if( return_code == 0 )
+        {
+        return_code = make_directory( path, "archive_local" );
+        }
+
+    // The "archive_remote" directory should hold archived things created remotely
+    if( return_code == 0 )
+        {
+        return_code = make_directory( path, "archive_remote" );
         }
 
     return return_code;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////
-int initialize( char *base_directory, Configuration config_db )
+int main ( int argc, char *argv[] )
+// int initialize( char *base_directory, Configuration config_db )
     {
 
-    char *test_string;
-    int i, return_code = 0, divider_point = 0, base_file_pointer = 0;
+    int
+        return_code = 0,
+        divider_point = 0,
+        base_file_pointer = 0;
+    char
+        base_directory[] = argv[ 0 ],
+        base_path[ 256 ],
+        test_string[ 256 ] = "\0";
 
-    test_string = malloc( sizeof( base_directory ));
-
+    // There should be a path given on the command line to where the directory will be built
+    for( int i = 0; i < argc; i++ )
+        {
+        strncpy( test_string, argv[ i ] )
+        }
     // Step through the directory given and separate the path from the program file name
     base_file_pointer = 0;
     for( i = 0; i < strlen( base_directory ); i++ )
         {
-        if( base_directory[i] == PATH_SEPARATOR )
+        if( base_directory[ i ] == PATH_SEPARATOR )
             {
             base_file_pointer = 0;
-            strncpy( config_db.base_path, base_directory, i + 1 );
+            strncpy( base_path, base_directory, i + 1 );
             }
         else
             {
-            test_string[base_file_pointer] = base_directory[i];
-            test_string[++base_file_pointer] = 0;
+            test_string[ base_file_pointer ] = base_directory[ i ];
+            test_string[ ++base_file_pointer ] = 0;
             }
         }
 
     // Step through the base file name to get any file extension
     for( i = 0; i < strlen( test_string ); i++ )
         {
-        if( test_string[i] == '.' )
+        if( test_string[ i ] == '.' )
             {
             base_file_pointer = 0;
-            strncpy( config_db.base_file, test_string, i );
+            strncpy( base_file, test_string, i );
             }
         }
 
-    // Get the configuration values
-    return_code = read_configuration( config_db );
+    // Save the default configuration values
+    return_code = set_configuration( config_db );
 
     // Check the directory structure
     if( return_code == 0 )
         {
         return_code = check_directory_structure( config_db );
         }
-
-    free( test_string );
 
     return return_code;
     }
@@ -135,21 +155,30 @@ int make_directory( char *base_path, char *directory_name )
     }
 
 ////////////////////////////////////////////////////////////////////////////////////
-int read_configuration( Configuration config_data )
+int main ( int argc, char *argv[] )
     {
     // Make and/or read the configuration file/data
+    char
+        db_name[ 256 ],
+        sql_statement[ 256 ];
+    const char
+        remaining_sql[ 256 ];
+    int
+        rc,
+        return_code = 0,
+        found_key_file_location = 0;
+    sqlite3
+        *db;
+    sqlite3_stmt
+        *compiled_sql;
+    struct
+        stat
+            test_result;
 
-    char *db_name, *sql_statement;
-    const char *remaining_sql;
-    int rc, return_code = 0, found_key_file_location = 0;
-    sqlite3 *db;
-    sqlite3_stmt *compiled_sql;
-    struct stat test_result;
-
-    // Allocate memory for the strings
-    db_name = malloc( sizeof( config_data.base_path ) + sizeof( config_data.base_file ) + 6 );
-    sprintf( db_name, "%s%s.ini", config_data.base_path, config_data.base_file );
-    sql_statement = malloc( sizeof( char ) * 1024 );
+    // Assign the default values
+    memset( db_name, '\0', sizeof( db_name ));
+    memset( sql_statement, '\0', sizeof( sql_statement ));
+    sprintf( db_name, "/home/mark/.1840/1840.ini" );
 
     // Open (or create) the database
     rc = sqlite3_open( db_name, &db );

@@ -59,7 +59,6 @@ string Configuration::ProgramName( )
 // Set all frames to the default settingss
 void Configuration::DefaultFrames()
     {
-cout << "Reset the frames\n";
     // Reset the origin points
     Point pt;
     pt.x = 0.0;
@@ -132,10 +131,9 @@ Configuration::Configuration( const string program_name )
     this->config_folder_names[ OUTGOING ] = "outgoing";
     this->config_folder_names[ INCOMING ] = "incoming";
     this->config_folder_names[ RECEIVED ] = "received";
-    this->config_folder_names[ ARCHIVE_LOCAL ] = "archive_local_origin";
-    this->config_folder_names[ ARCHIVE_REMOTE ] = "archive_remote_origin";
+    this->config_folder_names[ ARCHIVE_LOCAL ] = "archive_local";
+    this->config_folder_names[ ARCHIVE_REMOTE ] = "archive_remote";
 
-//    this->ResetFrames( );
     // working_path may be adjusted to find the configuration file
     this->config_base_path = Disk.UserDataDir( );
 
